@@ -1,0 +1,50 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" (click)="close.emit()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex justify-between items-center flex-shrink-0">
+      <div>
+        <h2 class="text-xl font-bold">Autorização de Participação</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Para {{ membro().nome }}</p>
+      </div>
+      <button (click)="close.emit()" class="text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+      </button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-8 overflow-y-auto" id="printable-area">
+        <div class="text-center mb-6">
+            <h3 class="text-2xl font-bold uppercase text-gray-800 dark:text-gray-200">AUTORIZAÇÃO</h3>
+        </div>
+        <div class="text-justify space-y-4 text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p>
+                Eu, ______________________________________________________________________,
+                portador(a) do RG ______________________________, autorizo o(a) menor
+                <strong class="font-bold text-gray-900 dark:text-white">{{ membro().nome }}</strong>,
+                sob minha responsabilidade, a participar do evento
+                <strong class="font-bold text-gray-900 dark:text-white">"{{ evento().tipo }}"</strong>,
+                que ocorrerá em <strong class="font-bold text-gray-900 dark:text-white">{{ evento().data | date:'fullDate':'':'pt-BR' }}</strong>
+                no local "<strong class="font-bold text-gray-900 dark:text-white">{{ evento().local }}</strong>".
+            </p>
+            <p>
+                Estou ciente das atividades a serem desenvolvidas e isento o Clube de Desbravadores
+                de qualquer responsabilidade por acidentes que não sejam causados por negligência da organização.
+            </p>
+        </div>
+        <div class="mt-24 text-center text-gray-700 dark:text-gray-300">
+            <div class="w-80 h-px bg-gray-400 mx-auto"></div>
+            <p class="mt-2">Assinatura do Responsável</p>
+        </div>
+        <div class="mt-8 text-center text-sm text-gray-500 dark:text-gray-400">
+            <p>_____________________, {{ hoje | date:'dd de MMMM de yyyy':'':'pt-BR' }}</p>
+        </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex-shrink-0">
+      <button type="button" (click)="print()" class="px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+        Imprimir
+      </button>
+    </div>
+  </div>
+</div>

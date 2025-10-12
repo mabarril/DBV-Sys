@@ -1,0 +1,174 @@
+<main class="flex-1 p-4 sm:p-6">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+    <div>
+      <h1 class="text-2xl font-bold">Especialidades</h1>
+      <p class="mt-1 text-gray-600 dark:text-gray-400">Gerencie as especialidades e o progresso dos desbravadores.</p>
+    </div>
+    <button (click)="openEspecialidadeModal(null)" class="mt-4 sm:mt-0 flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+      Adicionar Especialidade
+    </button>
+  </div>
+
+  <!-- Report Section -->
+  <div class="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+    <h2 class="text-xl font-semibold mb-4">Relatório de Especialidades Concluídas</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+      <!-- Filter by Specialty -->
+      <div>
+        <label for="filtroEspecialidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Especialidade</label>
+        <select id="filtroEspecialidade" (change)="onFiltroChange($event, 'especialidadeId')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todas</option>
+          @for(especialidade of especialidades(); track especialidade.id) {
+            <option [value]="especialidade.id">{{ especialidade.nome }}</option>
+          }
+        </select>
+      </div>
+      <!-- Filter by Unit -->
+      <div>
+        <label for="filtroUnidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unidade</label>
+        <select id="filtroUnidade" (change)="onFiltroChange($event, 'unidade')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todas</option>
+          @for(unidade of unidades(); track unidade) {
+            <option [value]="unidade">{{ unidade }}</option>
+          }
+        </select>
+      </div>
+      <!-- Filter by Year -->
+      <div>
+        <label for="filtroAno" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ano</label>
+        <select id="filtroAno" (change)="onFiltroChange($event, 'ano')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todos</option>
+           @for(ano of anosDisponiveis(); track ano) {
+            <option [value]="ano">{{ ano }}</option>
+          }
+        </select>
+      </div>
+      <!-- Filter by Month -->
+      <div>
+        <label for="filtroMes" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Mês</label>
+        <select id="filtroMes" (change)="onFiltroChange($event, 'mes')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todos</option>
+          @for(mes of meses; track mes.valor) {
+             <option [value]="mes.valor">{{ mes.nome }}</option>
+          }
+        </select>
+      </div>
+      <!-- Generate Button -->
+      <div class="lg:col-span-1">
+        <button (click)="gerarRelatorio()" class="w-full flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+          Gerar Relatório
+        </button>
+      </div>
+    </div>
+
+    <!-- Report Results -->
+    @if (relatorioGerado()) {
+      <div class="mt-6 overflow-x-auto">
+        <h3 class="text-lg font-semibold mb-4">Resultados do Relatório</h3>
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Membro</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Unidade</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Especialidade</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Data Conclusão</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Instrutor</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            @for (item of relatorioResultados(); track $index) {
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ item.membroNome }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.unidade }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.especialidadeNome }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.dataConclusao | date:'dd/MM/yyyy' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.instrutorNome }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="5" class="text-center p-6 text-sm text-gray-500 dark:text-gray-400">
+                  Nenhum registro encontrado para os filtros selecionados.
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+
+  <!-- Content -->
+  <div class="space-y-8">
+    @for (group of groupedEspecialidades(); track group.area) {
+      <section>
+        <h2 class="text-xl font-semibold mb-4 pb-2 border-b border-gray-200 dark:border-gray-700">{{ group.area }}</h2>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+          @for (especialidade of group.especialidades; track especialidade.id) {
+            <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden flex flex-col group">
+              <!-- Card Header -->
+              <div class="p-4 flex items-start justify-between">
+                <div class="flex items-start space-x-4">
+                  <img [src]="especialidade.imageUrl" alt="Emblema da especialidade" class="w-16 h-16 rounded-md object-cover border-2 border-gray-200 dark:border-gray-600">
+                  <div>
+                    <h3 class="font-bold text-lg text-gray-900 dark:text-white">{{ especialidade.nome }}</h3>
+                  </div>
+                </div>
+                <!-- Actions Dropdown -->
+                <div class="relative">
+                   <div class="absolute top-0 right-0 opacity-0 group-hover:opacity-100 transition-opacity flex space-x-1 p-1 bg-gray-100 dark:bg-gray-900 rounded-md">
+                      <button (click)="openEspecialidadeModal(especialidade)" class="p-1 text-gray-500 hover:text-yellow-500 dark:hover:text-yellow-400 rounded-full transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+                      </button>
+                      <button (click)="handleDeleteEspecialidade(especialidade)" class="p-1 text-gray-500 hover:text-red-500 dark:hover:text-red-400 rounded-full transition">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                      </button>
+                    </div>
+                </div>
+              </div>
+
+              <!-- Conclusoes -->
+              <div class="px-4 pb-4 flex-grow">
+                <h4 class="font-semibold text-sm mb-2 text-gray-600 dark:text-gray-400">Concluído por:</h4>
+                <div class="space-y-2 text-sm">
+                  @for (conclusao of getConclusoesPorEspecialidade(especialidade.id); track conclusao.membroId) {
+                    <div class="flex justify-between items-center">
+                      <span class="text-gray-800 dark:text-gray-300">{{ getMembroNome(conclusao.membroId) }}</span>
+                      <span class="text-xs text-gray-500">{{ conclusao.dataConclusao | date:'dd/MM/yy' }}</span>
+                    </div>
+                  } @empty {
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Ninguém concluiu ainda.</p>
+                  }
+                </div>
+              </div>
+
+              <!-- Footer/Action -->
+              <div class="p-4 bg-gray-50 dark:bg-gray-900/50">
+                <button (click)="openConclusaoModal(especialidade)" class="w-full text-center px-3 py-1.5 bg-yellow-400/20 text-yellow-800 dark:text-yellow-300 dark:bg-yellow-500/10 text-sm font-semibold rounded-md hover:bg-yellow-400/40 transition">
+                  Registrar Conclusão
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </section>
+    }
+  </div>
+</main>
+
+@if (isEspecialidadeModalOpen()) {
+  <app-especialidade-form
+    [especialidade]="editingEspecialidade()"
+    (save)="handleSaveEspecialidade($event)"
+    (close)="closeEspecialidadeModal()"
+  />
+}
+
+@if (isConclusaoModalOpen()) {
+  <app-conclusao-form
+    [especialidade]="activeEspecialidadeForConclusao()!"
+    (save)="handleSaveConclusao($event)"
+    (close)="closeConclusaoModal()"
+  />
+}

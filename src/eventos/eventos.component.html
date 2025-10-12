@@ -1,0 +1,97 @@
+<main class="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900/50 min-h-screen">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Gerenciamento de Eventos</h1>
+      <p class="mt-1 text-gray-600 dark:text-gray-400">Crie eventos, gerencie inscrições e emita autorizações.</p>
+    </div>
+    <button (click)="openEventoModal(null)" class="mt-4 sm:mt-0 flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+      Criar Novo Evento
+    </button>
+  </div>
+
+  <!-- Events Grid -->
+  <div class="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+    @for (evento of eventos(); track evento.id) {
+      <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md flex flex-col">
+        <!-- Event Header -->
+        <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+          <div class="flex justify-between items-start">
+            <div>
+              <h2 class="text-xl font-bold text-gray-900 dark:text-white">{{ evento.tipo }}</h2>
+              <div class="flex items-center text-sm text-gray-500 dark:text-gray-400 mt-1">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                <span>{{ evento.data | date:'dd/MM/yyyy' }}</span>
+                <span class="mx-2">|</span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                <span>{{ evento.local }}</span>
+              </div>
+            </div>
+            <button (click)="openEventoModal(evento)" class="text-gray-400 hover:text-yellow-500 transition">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path d="M17.414 2.586a2 2 0 00-2.828 0L7 10.172V13h2.828l7.586-7.586a2 2 0 000-2.828z" /><path fill-rule="evenodd" d="M2 6a2 2 0 012-2h4a1 1 0 010 2H4v10h10v-4a1 1 0 112 0v4a2 2 0 01-2 2H4a2 2 0 01-2-2V6z" clip-rule="evenodd" /></svg>
+            </button>
+          </div>
+          <div class="mt-2 text-lg font-semibold text-gray-700 dark:text-gray-300">{{ evento.valor | currency:'BRL' }}</div>
+        </div>
+
+        <!-- Inscriptions List -->
+        <div class="p-4 flex-grow">
+          <h3 class="font-semibold text-gray-700 dark:text-gray-300 mb-2">Inscritos ({{ getInscritos(evento.id).length }})</h3>
+          <div class="space-y-2 max-h-48 overflow-y-auto pr-2">
+            @for (membro of getInscritos(evento.id); track membro.id) {
+              <div class="flex justify-between items-center text-sm p-2 rounded-md bg-gray-50 dark:bg-gray-700/50">
+                <span class="text-gray-800 dark:text-gray-300">{{ membro.nome }}</span>
+                @if (isMenorDeIdade(membro.dataNascimento)) {
+                   <button (click)="openAutorizacaoModal(membro, evento)" class="text-xs font-semibold text-blue-600 dark:text-blue-400 hover:underline">
+                    Gerar Autorização
+                  </button>
+                }
+              </div>
+            } @empty {
+              <p class="text-sm text-gray-500 dark:text-gray-400">Nenhum membro inscrito.</p>
+            }
+          </div>
+        </div>
+
+        <!-- Actions Footer -->
+        <div class="p-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700">
+          <button (click)="openInscricaoModal(evento)" class="w-full text-center px-3 py-2 bg-yellow-400/20 text-yellow-800 dark:text-yellow-300 dark:bg-yellow-500/10 font-semibold rounded-md hover:bg-yellow-400/40 transition">
+            Gerenciar Inscrições
+          </button>
+        </div>
+      </div>
+    } @empty {
+        <div class="lg:col-span-2 xl:col-span-3 text-center py-12 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Nenhum Evento Cadastrado</h2>
+            <p class="mt-2 text-gray-500 dark:text-gray-400">Crie o primeiro evento para começar a gerenciar as atividades do clube.</p>
+        </div>
+    }
+  </div>
+</main>
+
+<!-- Modals -->
+@if (isEventoModalOpen()) {
+  <app-evento-form
+    [evento]="editingEvento()"
+    (save)="handleSaveEvento($event)"
+    (close)="closeEventoModal()"
+    (delete)="handleDeleteEvento($event)"
+  />
+}
+
+@if (isInscricaoModalOpen() && activeEvento()) {
+  <app-inscricao-evento-form
+    [evento]="activeEvento()!"
+    (save)="handleSaveInscricoes($event)"
+    (close)="closeInscricaoModal()"
+  />
+}
+
+@if (isAutorizacaoModalOpen() && activeMembro() && activeEvento()) {
+  <app-autorizacao-modal
+    [membro]="activeMembro()!"
+    [evento]="activeEvento()!"
+    (close)="closeAutorizacaoModal()"
+  />
+}

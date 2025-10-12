@@ -1,0 +1,56 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" (click)="onCancel()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg flex flex-col" (click)="$event.stopPropagation()">
+    <form [formGroup]="conclusaoForm" (ngSubmit)="onSubmit()" class="flex flex-col h-full max-h-[90vh]">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+        <h2 class="text-xl font-bold">Registrar Conclusão</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ especialidade().nome }}</p>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4 overflow-y-auto">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Membros (selecione um ou mais)</label>
+          <div class="max-h-48 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md p-2 space-y-2 bg-gray-50 dark:bg-gray-700/50" formArrayName="membros">
+            @for(membro of membrosAtivos(); track membro.id; let i = $index) {
+              <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600/50 cursor-pointer">
+                <input type="checkbox" [formControlName]="i" class="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500">
+                <span class="text-gray-800 dark:text-gray-300">{{ membro.nome }}</span>
+              </label>
+            } @empty {
+              <p class="text-sm text-gray-500 dark:text-gray-400 p-2">Nenhum membro ativo encontrado.</p>
+            }
+          </div>
+           @if (membrosFormArray.invalid && membrosFormArray.touched) {
+            <p class="mt-1 text-xs text-red-500">Selecione pelo menos um membro.</p>
+          }
+        </div>
+
+        <div>
+          <label for="instrutorId" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Instrutor</label>
+          <select id="instrutorId" formControlName="instrutorId" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+             <option [ngValue]="null" disabled>Selecione um instrutor</option>
+            @for(instrutor of instrutores(); track instrutor.id) {
+              <option [ngValue]="instrutor.id">{{ instrutor.nome }}</option>
+            }
+          </select>
+        </div>
+        
+        <div>
+          <label for="dataConclusao" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data de Conclusão</label>
+          <input type="date" id="dataConclusao" formControlName="dataConclusao" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex-shrink-0">
+        <button type="button" (click)="onCancel()" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition mr-2">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="conclusaoForm.invalid" class="px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Salvar Registros
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

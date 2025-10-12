@@ -1,0 +1,42 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" (click)="onCancel()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg" (click)="$event.stopPropagation()">
+    <form [formGroup]="especialidadeForm" (ngSubmit)="onSubmit()">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold">{{ isEditing ? 'Editar Especialidade' : 'Adicionar Nova Especialidade' }}</h2>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+        <div>
+          <label for="nome" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome da Especialidade</label>
+          <input type="text" id="nome" formControlName="nome" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        </div>
+
+        <div>
+          <label for="area" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Área</label>
+          <select id="area" formControlName="area" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+            @for(area of areaOptions; track area) {
+              <option [value]="area">{{ area }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="imageUrl" class="block text-sm font-medium text-gray-700 dark:text-gray-300">URL da Imagem do Emblema</label>
+          <input type="text" id="imageUrl" formControlName="imageUrl" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
+        <button type="button" (click)="onCancel()" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition mr-2">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="especialidadeForm.invalid" class="px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

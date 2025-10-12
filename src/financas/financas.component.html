@@ -1,0 +1,191 @@
+<div class="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900/50 min-h-screen">
+  <header class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Controle Financeiro</h1>
+    <p class="text-gray-600 dark:text-gray-400 mt-1">Gerencie as inscrições, mensalidades e gere relatórios financeiros.</p>
+  </header>
+
+  <!-- Report Section -->
+  <div class="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+    <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Relatório Financeiro de Inscrições</h2>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+      <!-- Filtro Ano -->
+      <div>
+        <label for="filtroAno" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ano</label>
+        <select id="filtroAno" (change)="onFiltroChange($event, 'ano')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todos</option>
+          @for(ano of anosInscricao(); track ano) {
+            <option [value]="ano">{{ ano }}</option>
+          }
+        </select>
+      </div>
+      <!-- Filtro Unidade -->
+      <div>
+        <label for="filtroUnidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unidade</label>
+        <select id="filtroUnidade" (change)="onFiltroChange($event, 'unidade')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todas</option>
+          @for(unidade of unidades(); track unidade) {
+            <option [value]="unidade">{{ unidade }}</option>
+          }
+        </select>
+      </div>
+      <!-- Filtro Classe -->
+      <div>
+        <label for="filtroClasse" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Classe</label>
+        <select id="filtroClasse" (change)="onFiltroChange($event, 'classe')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todas</option>
+           @for(classe of classes(); track classe.nome) {
+            <option [value]="classe.nome">{{ classe.nome }}</option>
+          }
+        </select>
+      </div>
+      <!-- Filtro Status Pagamento -->
+      <div>
+        <label for="filtroStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status Pag.</label>
+        <select id="filtroStatus" (change)="onFiltroChange($event, 'statusPagamento')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todos</option>
+          <option value="em_dia">Em dia</option>
+          <option value="pendente">Com pendências</option>
+        </select>
+      </div>
+      <!-- Generate Button -->
+      <div class="lg:col-span-1">
+        <button (click)="gerarRelatorio()" class="w-full flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+          Gerar Relatório
+        </button>
+      </div>
+    </div>
+
+    <!-- Report Results -->
+    @if (relatorioGerado()) {
+      <div class="mt-6">
+        <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Resultados do Relatório</h3>
+        <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+          <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead class="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Membro</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Unidade</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Classe</th>
+                <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status Anuidade</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor Pago</th>
+                <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor Pendente</th>
+              </tr>
+            </thead>
+            <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+              @for (item of resultadosRelatorio(); track item.nome) {
+                <tr>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ item.nome }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.unidade }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.classe }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm">
+                    <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full" [class]="item.statusAnuidade === 'Em dia' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200'">
+                      {{ item.statusAnuidade }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-mono text-green-600 dark:text-green-400">{{ item.valorPago | currency:'BRL' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-mono text-red-600 dark:text-red-400">{{ item.valorPendente | currency:'BRL' }}</td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="6" class="text-center p-6 text-sm text-gray-500 dark:text-gray-400">
+                    Nenhum registro encontrado para os filtros selecionados.
+                  </td>
+                </tr>
+              }
+            </tbody>
+            @if (sumarioRelatorio(); as sumario) {
+              <tfoot class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <td class="px-6 py-3 text-left text-sm font-bold text-gray-700 dark:text-gray-200" colspan="4">
+                    Total ({{ sumario.totalInscritos }} inscritos)
+                  </td>
+                   <td class="px-6 py-3 text-right text-sm font-bold text-gray-700 dark:text-gray-200 font-mono">
+                    {{ sumario.totalArrecadado | currency:'BRL' }}
+                  </td>
+                   <td class="px-6 py-3 text-right text-sm font-bold text-gray-700 dark:text-gray-200 font-mono">
+                    {{ sumario.totalReceber | currency:'BRL' }}
+                  </td>
+                </tr>
+              </tfoot>
+            }
+          </table>
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Inscription Management -->
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden">
+     <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Gerenciamento de Inscrições</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">Visualize e gerencie as inscrições individuais de cada membro.</p>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
+        <thead class="text-xs text-gray-700 dark:text-gray-300 uppercase bg-gray-50 dark:bg-gray-700">
+          <tr>
+            <th scope="col" class="px-6 py-3">Membro</th>
+            <th scope="col" class="px-6 py-3">Status da Inscrição</th>
+            <th scope="col" class="px-6 py-3">Saldo Devedor</th>
+            <th scope="col" class="px-6 py-3 text-right">Ações</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of membrosFinanceiro(); track item.membro.id) {
+            <tr class="bg-white dark:bg-gray-800 border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700/50">
+              <td class="px-6 py-4 font-medium text-gray-900 dark:text-white whitespace-nowrap">
+                {{ item.membro.nome }}
+              </td>
+              <td class="px-6 py-4">
+                @if (item.inscricao) {
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full"
+                      [class]="item.inscricao.status === 'Ativa' ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200'">
+                    {{ item.inscricao.status }} ({{ item.inscricao.ano }})
+                  </span>
+                } @else {
+                  <span class="px-2 py-1 text-xs font-semibold rounded-full bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                    Não Inscrito
+                  </span>
+                }
+              </td>
+              <td class="px-6 py-4 font-mono text-gray-700 dark:text-gray-300">
+                {{ item.saldoDevedor | currency:'BRL' }}
+              </td>
+              <td class="px-6 py-4 text-right">
+                @if (item.inscricao) {
+                  <button (click)="openDetalhesModal(item)" class="font-medium text-yellow-500 hover:underline">
+                    Ver Detalhes
+                  </button>
+                } @else {
+                  <button (click)="openGerarInscricaoModal(item.membro)" class="font-medium text-green-500 hover:underline">
+                    Gerar Inscrição
+                  </button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Modal Gerar Inscrição -->
+  @if (isGerarInscricaoModalOpen() && membroSelecionado()) {
+    <app-inscricao-form 
+      [membro]="membroSelecionado()!"
+      (save)="handleGerarInscricao($event)"
+      (close)="closeGerarInscricaoModal()">
+    </app-inscricao-form>
+  }
+
+  <!-- Modal Detalhes do Membro -->
+  @if (isDetalhesModalOpen() && detalhesSelecionado()) {
+    <app-detalhes-membro 
+      [membro]="detalhesSelecionado()!.membro"
+      [inscricao]="detalhesSelecionado()!.inscricao"
+      [mensalidades]="detalhesSelecionado()!.mensalidades"
+      (pagar)="handlePagarMensalidade($event)"
+      (close)="closeDetalhesModal()">
+    </app-detalhes-membro>
+  }
+</div>

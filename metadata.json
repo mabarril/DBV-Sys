@@ -1,0 +1,5 @@
+{
+  "name": "Clube de Desbravadores",
+  "description": "Uma aplicação para gerenciar o Clube de Desbravadores, com um painel principal com navegação.",
+  "requestFramePermissions": []
+}

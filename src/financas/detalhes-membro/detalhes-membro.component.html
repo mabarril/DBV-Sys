@@ -1,0 +1,111 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" (click)="close.emit()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-3xl flex flex-col max-h-[90vh]" (click)="$event.stopPropagation()">
+    <!-- Modal Header -->
+    <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+      <h2 class="text-xl font-bold">Detalhes Financeiros</h2>
+      @if (inscricao(); as insc) {
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ membro().nome }} - Inscrição {{ insc.ano }}</p>
+      } @else {
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ membro().nome }}</p>
+      }
+    </div>
+
+    <!-- Modal Body -->
+    <div class="p-6 overflow-y-auto space-y-6">
+      <!-- Mensalidades Section -->
+      @if (inscricao()) {
+        <div>
+          <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Mensalidades da Anuidade</h3>
+          <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+              <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Parcela</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Vencimento</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                  <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ação</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                @for (mensalidade of mensalidades(); track mensalidade.id; let i = $index) {
+                  <tr>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ i + 1 }}/10</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ mensalidade.dataVencimento | date:'dd/MM/yyyy' }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ mensalidade.valor | currency:'BRL' }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap">
+                      @switch (getMensalidadeStatus(mensalidade)) {
+                        @case ('Paga') {
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Paga</span>
+                        }
+                        @case ('Pendente') {
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">Pendente</span>
+                        }
+                        @case ('Atrasada') {
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Atrasada</span>
+                        }
+                      }
+                    </td>
+                    <td class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                      @if (getMensalidadeStatus(mensalidade) !== 'Paga') {
+                        <button (click)="pagarMensalidade.emit(mensalidade.id)" class="px-3 py-1 text-xs bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">Marcar como Paga</button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+
+      <!-- Outros Débitos Section -->
+      @if (debitos().length > 0) {
+        <div>
+          <h3 class="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">Outros Débitos (Eventos, etc.)</h3>
+          <div class="overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+            <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+               <thead class="bg-gray-50 dark:bg-gray-700">
+                <tr>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Descrição</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Data</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor</th>
+                  <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status</th>
+                  <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Ação</th>
+                </tr>
+              </thead>
+              <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+                @for (debito of debitos(); track debito.id) {
+                  <tr>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ debito.descricao }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ debito.data | date:'dd/MM/yyyy' }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ debito.valor | currency:'BRL' }}</td>
+                    <td class="px-4 py-2 whitespace-nowrap">
+                       @if (debito.status === 'Pago') {
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Pago</span>
+                        } @else {
+                          <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Pendente</span>
+                        }
+                    </td>
+                    <td class="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                      @if (debito.status !== 'Pago') {
+                        <button (click)="pagarDebito.emit(debito.id)" class="px-3 py-1 text-xs bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">Marcar como Pago</button>
+                      }
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex-shrink-0">
+      <button type="button" (click)="close.emit()" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition">
+        Fechar
+      </button>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,57 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center" (click)="onCancel()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg m-4" (click)="$event.stopPropagation()">
+    <form [formGroup]="membroForm" (ngSubmit)="onSubmit()">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold">{{ isEditing ? 'Editar Membro' : 'Adicionar Novo Membro' }}</h2>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+        <div>
+          <label for="nome" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nome Completo</label>
+          <input type="text" id="nome" formControlName="nome" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          @if (membroForm.get('nome')?.invalid && membroForm.get('nome')?.touched) {
+            <p class="mt-1 text-xs text-red-500">O nome é obrigatório.</p>
+          }
+        </div>
+
+        <div>
+          <label for="unidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unidade</label>
+          <select id="unidade" formControlName="unidade" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+            @for(unidade of unidades; track unidade) {
+              <option [value]="unidade">{{ unidade }}</option>
+            }
+          </select>
+        </div>
+
+        <div>
+          <label for="cargo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Cargo</label>
+          <select id="cargo" formControlName="cargo" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+            @for(cargo of cargoOptions; track cargo) {
+              <option [value]="cargo">{{ cargo }}</option>
+            }
+          </select>
+        </div>
+        
+        <div>
+          <label for="dataNascimento" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data de Nascimento</label>
+          <input type="date" id="dataNascimento" formControlName="dataNascimento" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+           @if (membroForm.get('dataNascimento')?.invalid && membroForm.get('dataNascimento')?.touched) {
+            <p class="mt-1 text-xs text-red-500">A data de nascimento é obrigatória.</p>
+          }
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
+        <button type="button" (click)="onCancel()" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition mr-2">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="membroForm.invalid" class="px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

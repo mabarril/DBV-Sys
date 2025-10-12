@@ -1,0 +1,40 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" (click)="onCancel()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-lg" (click)="$event.stopPropagation()">
+    <form [formGroup]="inscricaoForm" (ngSubmit)="onSubmit()">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700">
+        <h2 class="text-xl font-bold">Realizar Inscrição Anual</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ membro().nome }}</p>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4">
+        <div>
+          <label for="ano" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ano da Inscrição</label>
+          <input type="number" id="ano" formControlName="ano" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        </div>
+
+        <div>
+          <label for="valorTotal" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Valor Total (R$)</label>
+          <input type="number" id="valorTotal" formControlName="valorTotal" step="0.01" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+           @if (inscricaoForm.get('valorTotal')?.hasError('min')) {
+            <p class="mt-1 text-xs text-red-500">O valor deve ser maior que zero.</p>
+          }
+        </div>
+        <div class="p-3 bg-blue-50 dark:bg-blue-900/20 text-blue-800 dark:text-blue-300 rounded-md text-sm">
+          <p>Ao confirmar, o sistema gerará <strong>10 mensalidades</strong> com o valor de <strong>{{ (inscricaoForm.value.valorTotal || 0) / 10 | currency:'BRL' }}</strong> cada.</p>
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg">
+        <button type="button" (click)="onCancel()" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition mr-2">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="inscricaoForm.invalid" class="px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Confirmar Inscrição
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
