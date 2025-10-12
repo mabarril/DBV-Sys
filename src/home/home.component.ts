@@ -9,9 +9,14 @@ import { RouterOutlet, RouterLink, RouterLinkActive } from '@angular/router';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class HomeComponent {
-  sidebarOpen = signal(true);
+  desktopSidebarOpen = signal(true);
+  mobileSidebarOpen = signal(false);
 
-  toggleSidebar(): void {
-    this.sidebarOpen.update(value => !value);
+  toggleDesktopSidebar(): void {
+    this.desktopSidebarOpen.update(value => !value);
+  }
+
+  toggleMobileSidebar(): void {
+    this.mobileSidebarOpen.update(value => !value);
   }
 }

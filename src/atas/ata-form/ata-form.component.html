@@ -1,0 +1,104 @@
+<div class="fixed inset-0 bg-black bg-opacity-50 z-40 flex justify-center items-center p-4" (click)="onCancel()">
+  <div class="bg-white dark:bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl flex flex-col" (click)="$event.stopPropagation()">
+    <form [formGroup]="ataForm" (ngSubmit)="onSubmit()" class="flex flex-col h-full max-h-[90vh]">
+      <!-- Modal Header -->
+      <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex-shrink-0">
+        <h2 class="text-xl font-bold">{{ isEditing ? 'Editar Registro de Ata' : 'Registrar Nova Ata' }}</h2>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="p-6 space-y-4 overflow-y-auto">
+        <!-- Título -->
+        <div>
+          <label for="titulo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Título</label>
+          <input type="text" id="titulo" formControlName="titulo" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        </div>
+
+        <!-- Data e Tipo -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label for="data" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data</label>
+            <input type="date" id="data" formControlName="data" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          </div>
+          <div>
+            <label for="tipo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo</label>
+            <select id="tipo" formControlName="tipo" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+              @for(tipo of tiposAta; track tipo) {
+                <option [value]="tipo">{{ tipo }}</option>
+              }
+            </select>
+          </div>
+        </div>
+
+        <!-- Descrição -->
+        <div>
+          <label for="descricao" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Descrição / Ata</label>
+          <textarea id="descricao" formControlName="descricao" rows="6" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm"></textarea>
+        </div>
+
+        <!-- Participantes -->
+        <div>
+           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Participantes</label>
+           <div class="mb-2">
+             <input type="text" placeholder="Buscar participante..." (input)="onSearchParticipantes($event)"
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 sm:text-sm">
+          </div>
+          <div class="max-h-40 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md p-2 space-y-2 bg-gray-50 dark:bg-gray-700/50" formArrayName="participantes">
+            @for(membro of membros(); track membro.id; let i = $index) {
+              @if (membro.nome.toLowerCase().includes(participanteSearchTerm().toLowerCase())) {
+                <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600/50 cursor-pointer">
+                  <input type="checkbox" [formControlName]="i" class="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500">
+                  <span class="text-gray-800 dark:text-gray-300">{{ membro.nome }}</span>
+                </label>
+              }
+            }
+          </div>
+        </div>
+
+        <!-- Documentos -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 dark:text-gray-300">Anexar Documentos</label>
+          <div class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 dark:border-gray-600 border-dashed rounded-md">
+            <div class="space-y-1 text-center">
+              <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true">
+                <path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <div class="flex text-sm text-gray-600 dark:text-gray-400">
+                <label for="file-upload" class="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-yellow-600 hover:text-yellow-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-yellow-500">
+                  <span>Carregar arquivos</span>
+                  <input id="file-upload" name="file-upload" type="file" class="sr-only" multiple (change)="onFileChange($event)">
+                </label>
+                <p class="pl-1">ou arraste e solte</p>
+              </div>
+            </div>
+          </div>
+          @if (anexos().length > 0) {
+            <div class="mt-4">
+              <h4 class="text-sm font-medium text-gray-700 dark:text-gray-300">Arquivos Anexados:</h4>
+              <ul class="mt-2 space-y-2">
+                @for(anexo of anexos(); track anexo) {
+                  <li class="flex items-center justify-between text-sm p-2 bg-gray-100 dark:bg-gray-700 rounded-md">
+                    <span class="text-gray-800 dark:text-gray-200 truncate pr-2">{{ anexo }}</span>
+                    <button type="button" (click)="removeAnexo(anexo)" class="text-red-500 hover:text-red-700 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd" /></svg>
+                    </button>
+                  </li>
+                }
+              </ul>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="flex justify-end items-center p-4 bg-gray-50 dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 rounded-b-lg flex-shrink-0">
+        <button type="button" (click)="onCancel()" class="px-4 py-2 bg-gray-200 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition mr-2">
+          Cancelar
+        </button>
+        <button type="submit" [disabled]="ataForm.invalid" class="px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition disabled:opacity-50 disabled:cursor-not-allowed">
+          Salvar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

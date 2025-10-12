@@ -10,7 +10,8 @@ import { Evento } from '../evento.model';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class EventoFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  // FIX: Explicitly type injected FormBuilder to resolve 'unknown' type error.
+  private fb: FormBuilder = inject(FormBuilder);
 
   evento = input<Evento | null>(null);
   save = output<Omit<Evento, 'id'> & { id?: number }>();

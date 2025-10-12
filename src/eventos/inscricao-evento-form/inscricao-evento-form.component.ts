@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { Evento, InscricaoEvento } from '../evento.model';
 import { MembrosService } from '../../membros/membros.service';
@@ -18,7 +18,8 @@ interface MembroDisponivel {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class InscricaoEventoFormComponent implements OnInit {
-  private fb = inject(FormBuilder);
+  // FIX: Explicitly type injected FormBuilder to resolve 'unknown' type error.
+  private fb: FormBuilder = inject(FormBuilder);
   private membrosService = inject(MembrosService);
   private eventosService = inject(EventosService);
 
@@ -27,6 +28,7 @@ export class InscricaoEventoFormComponent implements OnInit {
   close = output<void>();
 
   inscricaoForm!: FormGroup;
+  membroSearchTerm = signal('');
   
   private allMembros = this.membrosService.getMembros();
   private inscricoes = this.eventosService.getInscricoes();
@@ -60,6 +62,10 @@ export class InscricaoEventoFormComponent implements OnInit {
 
   private addMemberCheckboxes(): void {
     this.membrosDisponiveis().forEach(() => this.membrosFormArray.push(this.fb.control(false)));
+  }
+
+  onSearchMembros(event: Event): void {
+    this.membroSearchTerm.set((event.target as HTMLInputElement).value);
   }
 
   onSubmit(): void {

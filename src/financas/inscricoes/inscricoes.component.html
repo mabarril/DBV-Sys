@@ -1,0 +1,158 @@
+<!-- Report Section -->
+<div class="mb-8 bg-white dark:bg-gray-800 rounded-lg shadow-md p-4 sm:p-6">
+  <h2 class="text-xl font-semibold mb-4 text-gray-800 dark:text-gray-200">Relatório Financeiro de Inscrições</h2>
+  <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
+    <!-- Filtro Ano -->
+    <div>
+      <label for="filtroAno" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Ano</label>
+      <select id="filtroAno" (change)="onFiltroChange($event, 'ano')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        <option value="">Todos</option>
+        @for(ano of anosInscricao(); track ano) {
+          <option [value]="ano">{{ ano }}</option>
+        }
+      </select>
+    </div>
+    <!-- Filtro Unidade -->
+    <div>
+      <label for="filtroUnidade" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Unidade</label>
+      <select id="filtroUnidade" (change)="onFiltroChange($event, 'unidade')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        <option value="">Todas</option>
+        @for(unidade of unidades(); track unidade) {
+          <option [value]="unidade">{{ unidade }}</option>
+        }
+      </select>
+    </div>
+    <!-- Filtro Classe -->
+    <div>
+      <label for="filtroClasse" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Classe</label>
+      <select id="filtroClasse" (change)="onFiltroChange($event, 'classe')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        <option value="">Todas</option>
+         @for(classe of classes(); track classe.nome) {
+          <option [value]="classe.nome">{{ classe.nome }}</option>
+        }
+      </select>
+    </div>
+    <!-- Filtro Status Pagamento -->
+    <div>
+      <label for="filtroStatus" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Status Pag.</label>
+      <select id="filtroStatus" (change)="onFiltroChange($event, 'statusPagamento')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+        <option value="">Todos</option>
+        <option value="em_dia">Em dia</option>
+        <option value="pendente">Pendente</option>
+        <option value="atrasado">Atrasado</option>
+      </select>
+    </div>
+    <!-- Generate Button -->
+    <div class="lg:col-span-1">
+      <button (click)="gerarRelatorio()" class="w-full flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+        Gerar Relatório
+      </button>
+    </div>
+  </div>
+
+  <!-- Report Results -->
+  @if (relatorioGerado()) {
+    <div class="mt-6">
+      <h3 class="text-lg font-semibold mb-4 text-gray-800 dark:text-gray-200">Resultados do Relatório</h3>
+      <!-- Desktop Table -->
+      <div class="hidden sm:block overflow-x-auto border border-gray-200 dark:border-gray-700 rounded-lg">
+        <table class="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+          <thead class="bg-gray-50 dark:bg-gray-700">
+            <tr>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Membro</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Unidade</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Classe</th>
+              <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Status Anuidade</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor Pago</th>
+              <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Valor Pendente</th>
+            </tr>
+          </thead>
+          <tbody class="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
+            @for (item of resultadosRelatorio(); track item.nome) {
+              <tr>
+                <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 dark:text-white">{{ item.nome }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.unidade }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500 dark:text-gray-300">{{ item.classe }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm">
+                   @switch (item.statusAnuidade) {
+                    @case ('Em dia') {
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Em dia</span>
+                    }
+                    @case ('Pendente') {
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">Pendente</span>
+                    }
+                    @case ('Atrasado') {
+                      <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Atrasado</span>
+                    }
+                  }
+                </td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-mono text-green-600 dark:text-green-400">{{ item.valorPago | currency:'BRL' }}</td>
+                <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-mono text-red-600 dark:text-red-400">{{ item.valorPendente | currency:'BRL' }}</td>
+              </tr>
+            } @empty {
+              <tr>
+                <td colspan="6" class="text-center p-6 text-sm text-gray-500 dark:text-gray-400">
+                  Nenhum registro encontrado para os filtros selecionados.
+                </td>
+              </tr>
+            }
+          </tbody>
+          @if (sumarioRelatorio(); as sumario) {
+            <tfoot class="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <td class="px-6 py-3 text-left text-sm font-bold text-gray-700 dark:text-gray-200" colspan="4">
+                  Total ({{ sumario.totalInscritos }} inscritos)
+                </td>
+                 <td class="px-6 py-3 text-right text-sm font-bold text-gray-700 dark:text-gray-200 font-mono">
+                  {{ sumario.totalArrecadado | currency:'BRL' }}
+                </td>
+                 <td class="px-6 py-3 text-right text-sm font-bold text-gray-700 dark:text-gray-200 font-mono">
+                  {{ sumario.totalReceber | currency:'BRL' }}
+                </td>
+              </tr>
+            </tfoot>
+          }
+        </table>
+      </div>
+      <!-- Mobile Card List -->
+       <div class="sm:hidden space-y-4">
+        @for (item of resultadosRelatorio(); track item.nome) {
+          <div class="p-4 rounded-lg bg-gray-50 dark:bg-gray-700/50">
+            <div class="flex justify-between items-start">
+              <div>
+                <p class="font-bold text-gray-900 dark:text-white">{{ item.nome }}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-300">{{ item.unidade }} / {{ item.classe }}</p>
+              </div>
+              @switch (item.statusAnuidade) {
+                @case ('Em dia') {
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200">Em dia</span>
+                }
+                @case ('Pendente') {
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">Pendente</span>
+                }
+                @case ('Atrasado') {
+                  <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200">Atrasado</span>
+                }
+              }
+            </div>
+            <div class="mt-4 pt-2 border-t border-gray-200 dark:border-gray-600 flex justify-between text-sm">
+              <span class="text-gray-500 dark:text-gray-400">Pago: <strong class="font-mono text-green-600 dark:text-green-400">{{ item.valorPago | currency:'BRL' }}</strong></span>
+              <span class="text-gray-500 dark:text-gray-400">Pendente: <strong class="font-mono text-red-600 dark:text-red-400">{{ item.valorPendente | currency:'BRL' }}</strong></span>
+            </div>
+          </div>
+        } @empty {
+            <div class="text-center p-6 text-sm text-gray-500 dark:text-gray-400">
+              Nenhum registro encontrado para os filtros selecionados.
+            </div>
+        }
+        @if (sumarioRelatorio(); as sumario) {
+          <div class="p-4 rounded-lg bg-gray-100 dark:bg-gray-900/80 mt-4 text-sm font-semibold">
+              <div class="flex justify-between"><span>Total de Inscritos:</span> <span>{{ sumario.totalInscritos }}</span></div>
+              <div class="flex justify-between"><span>Total Arrecadado:</span> <span class="font-mono">{{ sumario.totalArrecadado | currency:'BRL' }}</span></div>
+              <div class="flex justify-between"><span>Total a Receber:</span> <span class="font-mono">{{ sumario.totalReceber | currency:'BRL' }}</span></div>
+          </div>
+        }
+      </div>
+    </div>
+  }
+</div>

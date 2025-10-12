@@ -11,15 +11,21 @@
       <div class="p-6 space-y-4 overflow-y-auto">
         <div>
           <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Selecione os membros para inscrever</label>
+           <div class="mb-2">
+             <input type="text" placeholder="Buscar membro..." (input)="onSearchMembros($event)"
+                   class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-yellow-500 sm:text-sm">
+          </div>
           <div class="max-h-64 overflow-y-auto border border-gray-300 dark:border-gray-600 rounded-md p-2 space-y-1 bg-gray-50 dark:bg-gray-700/50">
             @for(membro of membrosDisponiveis(); track membro.membro.id; let i = $index) {
-              <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600/50" [class.cursor-pointer]="!membro.inscrito" [class.opacity-60]="membro.inscrito">
-                <input type="checkbox" [formControlName]="i" [disabled]="membro.inscrito" class="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500 disabled:opacity-50">
-                <span class="text-gray-800 dark:text-gray-300">{{ membro.membro.nome }}</span>
-                @if (membro.inscrito) {
-                  <span class="text-xs text-green-600 dark:text-green-400 font-semibold">(Já inscrito)</span>
-                }
-              </label>
+               @if (membro.membro.nome.toLowerCase().includes(membroSearchTerm().toLowerCase())) {
+                <label class="flex items-center space-x-3 p-2 rounded-md hover:bg-gray-100 dark:hover:bg-gray-600/50" [class.cursor-pointer]="!membro.inscrito" [class.opacity-60]="membro.inscrito">
+                  <input type="checkbox" [formControlName]="i" [disabled]="membro.inscrito" class="h-4 w-4 rounded border-gray-300 text-yellow-500 focus:ring-yellow-500 disabled:opacity-50">
+                  <span class="text-gray-800 dark:text-gray-300">{{ membro.membro.nome }}</span>
+                  @if (membro.inscrito) {
+                    <span class="text-xs text-green-600 dark:text-green-400 font-semibold">(Já inscrito)</span>
+                  }
+                </label>
+              }
             } @empty {
               <p class="text-sm text-gray-500 dark:text-gray-400 p-2">Nenhum membro disponível para inscrição.</p>
             }

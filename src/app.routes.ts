@@ -25,13 +25,40 @@ export const routes: Routes = [
         path: 'especialidades', 
         loadComponent: () => import('./especialidades/especialidades.component').then(c => c.EspecialidadesComponent) 
       },
+       { 
+        path: 'atas', 
+        loadComponent: () => import('./atas/atas.component').then(c => c.AtasComponent) 
+      },
       { 
         path: 'eventos', 
         loadComponent: () => import('./eventos/eventos.component').then(c => c.EventosComponent) 
       },
       { 
         path: 'financas', 
-        loadComponent: () => import('./financas/financas.component').then(c => c.FinancasComponent) 
+        loadComponent: () => import('./financas/financas.component').then(c => c.FinancasComponent),
+        children: [
+          {
+            path: 'inscricoes',
+            loadComponent: () => import('./financas/inscricoes/inscricoes.component').then(c => c.InscricoesComponent)
+          },
+          {
+            path: 'caixa',
+            loadComponent: () => import('./financas/caixa/caixa.component').then(c => c.CaixaComponent)
+          },
+          {
+            path: 'custos',
+            loadComponent: () => import('./financas/custos/custos.component').then(c => c.CustosComponent)
+          },
+          {
+            path: 'patrimonio',
+            loadComponent: () => import('./financas/patrimonio/patrimonio.component').then(c => c.PatrimonioComponent)
+          },
+          {
+            path: '',
+            redirectTo: 'inscricoes',
+            pathMatch: 'full'
+          }
+        ]
       },
       { 
         path: '', 

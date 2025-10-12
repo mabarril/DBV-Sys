@@ -1,4 +1,4 @@
-import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed } from '@angular/core';
+import { Component, ChangeDetectionStrategy, input, output, OnInit, inject, computed, signal } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormArray, AbstractControl, ValidatorFn } from '@angular/forms';
 import { Especialidade } from '../especialidade.model';
 import { MembrosService } from '../../membros/membros.service';
@@ -34,6 +34,7 @@ export class ConclusaoFormComponent implements OnInit {
   close = output<void>();
 
   conclusaoForm!: FormGroup;
+  membroSearchTerm = signal('');
   
   private allMembros = this.membrosService.getMembros();
   private inscricoes = this.financasService.getInscricoes();
@@ -77,6 +78,10 @@ export class ConclusaoFormComponent implements OnInit {
 
   private addMemberCheckboxes() {
     this.membrosAtivos().forEach(() => this.membrosFormArray.push(this.fb.control(false)));
+  }
+  
+  onSearchMembros(event: Event): void {
+    this.membroSearchTerm.set((event.target as HTMLInputElement).value);
   }
 
   onSubmit(): void {

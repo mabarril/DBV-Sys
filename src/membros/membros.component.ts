@@ -1,13 +1,27 @@
 import { Component, ChangeDetectionStrategy, signal, inject, computed } from '@angular/core';
+import { CurrencyPipe, DatePipe } from '@angular/common';
 import { MembrosService } from './membros.service';
 import { Membro } from './membro.model';
 import { MembroFormComponent } from './membro-form/membro-form.component';
 import { FinancasService } from '../financas/financas.service';
+import { Inscricao, Mensalidade, Debito } from '../financas/inscricao.model';
+import { InscricaoFormComponent } from '../financas/inscricao-form/inscricao-form.component';
+import { DetalhesMembroComponent } from '../financas/detalhes-membro/detalhes-membro.component';
+
+// A view model to combine data for financial details
+interface MembroFinanceiro {
+  membro: Membro;
+  inscricao: Inscricao | null;
+  mensalidades: Mensalidade[];
+  debitos: Debito[];
+  saldoDevedor: number;
+}
+
 
 @Component({
   selector: 'app-membros',
   standalone: true,
-  imports: [MembroFormComponent],
+  imports: [MembroFormComponent, InscricaoFormComponent, DetalhesMembroComponent, CurrencyPipe, DatePipe],
   templateUrl: './membros.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -17,9 +31,27 @@ export class MembrosComponent {
   
   membros = this.membrosService.getMembros();
   private inscricoes = this.financasService.getInscricoes();
+  private mensalidades = this.financasService.getMensalidades();
+  private debitos = this.financasService.getDebitos();
+
   searchTerm = signal('');
+  showOnlyActive = signal(false);
+  unidadeFiltro = signal('');
+  cargoFiltro = signal('');
+  
+  // Arrays for filter dropdowns
+  unidades: Membro['unidade'][] = ['Águias', 'Falcões', 'Lobos', 'Tigres'];
+  cargos: Membro['cargo'][] = ['Desbravador', 'Conselheiro', 'Diretor', 'Tesoureiro', 'Instrutor'];
+
+  // Member form modal state
   isModalOpen = signal(false);
   editingMembro = signal<Membro | null>(null);
+
+  // Inscription modals state
+  isGerarInscricaoModalOpen = signal(false);
+  isDetalhesModalOpen = signal(false);
+  membroSelecionado = signal<Membro | null>(null);
+  detalhesSelecionado = signal<{ membro: Membro; inscricao: Inscricao | null; mensalidades: Mensalidade[]; debitos: Debito[] } | null>(null);
 
   private activeMemberIds = computed(() => {
     const currentYear = new Date().getFullYear();
@@ -30,27 +62,91 @@ export class MembrosComponent {
     );
   });
 
+  filteredMembros = computed(() => {
+    const term = this.searchTerm().toLowerCase().trim();
+    const onlyActive = this.showOnlyActive();
+    const unidade = this.unidadeFiltro();
+    const cargo = this.cargoFiltro();
+    const activeIds = this.activeMemberIds();
+    
+    const members = this.membros();
+
+    const filtered = members.filter(membro => {
+      const matchActive = !onlyActive || activeIds.has(membro.id);
+      const matchUnidade = !unidade || membro.unidade === unidade;
+      const matchCargo = !cargo || membro.cargo === cargo;
+      const matchTerm = !term || 
+        membro.nome.toLowerCase().includes(term) ||
+        membro.cargo.toLowerCase().includes(term);
+
+      return matchActive && matchUnidade && matchCargo && matchTerm;
+    });
+    
+    // Sorting logic
+    return filtered.sort((a, b) => {
+      const aIsActive = activeIds.has(a.id);
+      const bIsActive = activeIds.has(b.id);
+      
+      // Active members first
+      if (aIsActive !== bIsActive) {
+        return aIsActive ? -1 : 1;
+      }
+      
+      // Then, alphabetically by name
+      return a.nome.localeCompare(b.nome);
+    });
+  });
+
+  private membrosFinanceiro = computed<MembroFinanceiro[]>(() => {
+    return this.membros()
+      .map(membro => {
+      const inscricao = this.inscricoes().find(i => i.membroId === membro.id && i.ano === new Date().getFullYear()) ?? null;
+      const mensalidades = inscricao ? this.mensalidades().filter(m => m.inscricaoId === inscricao.id) : [];
+      const debitos = this.debitos().filter(d => d.membroId === membro.id);
+      
+      const saldoDevedorMensalidades = mensalidades
+        .filter(m => m.status !== 'Paga')
+        .reduce((acc, m) => acc + m.valor, 0);
+      
+      const saldoDevedorDebitos = debitos
+        .filter(d => d.status !== 'Pago')
+        .reduce((acc, d) => acc + d.valor, 0);
+
+      return {
+        membro,
+        inscricao,
+        mensalidades,
+        debitos,
+        saldoDevedor: saldoDevedorMensalidades + saldoDevedorDebitos,
+      };
+    });
+  });
+
   isMembroAtivo(membroId: number): boolean {
     return this.activeMemberIds().has(membroId);
   }
-
-  filteredMembros = computed(() => {
-    const term = this.searchTerm().toLowerCase().trim();
-    if (!term) {
-      return this.membros();
-    }
-    return this.membros().filter(membro => 
-      membro.nome.toLowerCase().includes(term) ||
-      membro.unidade.toLowerCase().includes(term) ||
-      membro.cargo.toLowerCase().includes(term)
-    );
-  });
 
   onSearch(event: Event): void {
     const value = (event.target as HTMLInputElement).value;
     this.searchTerm.set(value);
   }
 
+  toggleShowOnlyActive(event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.showOnlyActive.set(isChecked);
+  }
+  
+  onUnidadeChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.unidadeFiltro.set(value);
+  }
+
+  onCargoChange(event: Event): void {
+    const value = (event.target as HTMLSelectElement).value;
+    this.cargoFiltro.set(value);
+  }
+
+  // --- Member Form Modal Logic ---
   openAddModal(): void {
     this.editingMembro.set(null);
     this.isModalOpen.set(true);
@@ -80,6 +176,68 @@ export class MembrosComponent {
     }
   }
 
+  // --- Inscription and Details Modals Logic ---
+  openGerarInscricaoModal(membro: Membro): void {
+    this.membroSelecionado.set(membro);
+    this.isGerarInscricaoModalOpen.set(true);
+  }
+
+  closeGerarInscricaoModal(): void {
+    this.isGerarInscricaoModalOpen.set(false);
+    this.membroSelecionado.set(null);
+  }
+
+  handleGerarInscricao(data: { membroId: number; ano: number; valorTotal: number }): void {
+    this.financasService.criarInscricao(data.membroId, data.ano, data.valorTotal);
+    this.closeGerarInscricaoModal();
+  }
+
+  openDetalhesModal(membro: Membro): void {
+    const item = this.membrosFinanceiro().find(mf => mf.membro.id === membro.id);
+    if (item) {
+      this.detalhesSelecionado.set({
+        membro: item.membro,
+        inscricao: item.inscricao,
+        mensalidades: item.mensalidades,
+        debitos: item.debitos
+      });
+      this.isDetalhesModalOpen.set(true);
+    }
+  }
+
+  closeDetalhesModal(): void {
+    this.isDetalhesModalOpen.set(false);
+    this.detalhesSelecionado.set(null);
+  }
+
+  handlePagarMensalidade(mensalidadeId: number): void {
+    this.financasService.pagarMensalidade(mensalidadeId);
+    this.refreshDetalhesModalData();
+  }
+
+  handlePagarDebito(debitoId: number): void {
+    this.financasService.pagarDebito(debitoId);
+    this.refreshDetalhesModalData();
+  }
+
+  private refreshDetalhesModalData(): void {
+     const detalhes = this.detalhesSelecionado();
+    if (detalhes) {
+        const updatedMembroFinanceiro = this.membrosFinanceiro().find(mf => mf.membro.id === detalhes.membro.id);
+        if (updatedMembroFinanceiro) {
+             this.detalhesSelecionado.set({
+                membro: updatedMembroFinanceiro.membro,
+                inscricao: updatedMembroFinanceiro.inscricao,
+                mensalidades: updatedMembroFinanceiro.mensalidades,
+                debitos: updatedMembroFinanceiro.debitos
+             });
+        } else {
+          this.closeDetalhesModal();
+        }
+    }
+  }
+
+  // --- Helper Methods ---
   calculateAge(dateString: string): number {
     if (!dateString) return 0;
     const today = new Date();
