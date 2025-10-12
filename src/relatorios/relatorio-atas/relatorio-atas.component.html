@@ -1,0 +1,56 @@
+<main class="p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+  <!-- Header -->
+  <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+    <div>
+      <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Relatório de Atas e Atos</h1>
+      <p class="mt-1 text-gray-600 dark:text-gray-400">Consulte e exporte as atas de reuniões e atos oficiais do clube.</p>
+    </div>
+    <div class="flex items-center gap-2 mt-4 sm:mt-0">
+       <button (click)="exportPdf()" class="flex-shrink-0 flex items-center justify-center px-4 py-2 bg-blue-500 text-white font-bold rounded-md hover:bg-blue-600 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor">
+          <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
+        </svg>
+        Exportar PDF
+      </button>
+    </div>
+  </div>
+
+  <!-- Filters -->
+  <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4 mb-6">
+    <h3 class="text-lg font-semibold mb-2">Filtrar Atas</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div>
+        <label for="ataDataInicio" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data de Início</label>
+        <input type="date" id="ataDataInicio" (change)="onFiltroChange($event, 'dataInicio')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="ataDataFim" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Data Final</label>
+        <input type="date" id="ataDataFim" (change)="onFiltroChange($event, 'dataFim')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+      </div>
+      <div>
+        <label for="ataTipo" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tipo de Ata</label>
+        <select id="ataTipo" (change)="onFiltroChange($event, 'tipo')" class="mt-1 block w-full border border-gray-300 dark:border-gray-600 rounded-md shadow-sm py-2 px-3 bg-gray-50 dark:bg-gray-700 focus:outline-none focus:ring-yellow-500 focus:border-yellow-500 sm:text-sm">
+          <option value="">Todos</option>
+          @for (tipo of tiposAta; track tipo) {
+            <option [value]="tipo">{{tipo}}</option>
+          }
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Atas List -->
+  <div id="atas-report" class="space-y-4">
+    @for(ata of filteredAtas(); track ata.id) {
+      <div class="bg-gray-50 dark:bg-gray-700/50 rounded-lg p-4">
+        <h2 class="text-lg font-bold text-gray-900 dark:text-white">{{ ata.titulo }}</h2>
+        <p class="text-sm text-gray-500 dark:text-gray-400">{{ ata.tipo }} - {{ ata.data | date:'dd/MM/yyyy' }}</p>
+        <p class="mt-2 text-sm text-gray-600 dark:text-gray-400">{{ ata.descricao }}</p>
+      </div>
+    } @empty {
+      <div class="text-center py-12 px-6">
+        <p class="mt-2 text-gray-500 dark:text-gray-400">Nenhum registro de ata corresponde aos filtros selecionados.</p>
+      </div>
+    }
+  </div>
+</main>

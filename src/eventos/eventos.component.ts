@@ -66,6 +66,18 @@ export class EventosComponent {
     }
     return age < 18;
   }
+  
+  calculateAge(dateString: string): number {
+    if (!dateString) return 0;
+    const today = new Date();
+    const birthDate = new Date(dateString);
+    let age = today.getFullYear() - birthDate.getFullYear();
+    const m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+  }
 
   // Evento Modal
   openEventoModal(evento: Evento | null): void {

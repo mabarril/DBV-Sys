@@ -1,24 +1,18 @@
 <div class="space-y-6">
-  <!-- Summary Card -->
-  <div class="grid grid-cols-1">
-    <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-      <h3 class="text-lg font-semibold text-red-600 dark:text-red-400">Total de Custos Registrados</h3>
-      <p class="mt-2 text-3xl font-bold font-mono">{{ totalCustos() | currency:'BRL' }}</p>
-    </div>
-  </div>
-
   <!-- Costs Table -->
   <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md">
     <!-- Header -->
     <div class="p-4 border-b border-gray-200 dark:border-gray-700 flex flex-col sm:flex-row justify-between items-center space-y-4 sm:space-y-0">
       <div>
         <h2 class="text-xl font-bold">Registro de Custos</h2>
-        <p class="text-sm text-gray-500 dark:text-gray-400">Visualize todos os custos e despesas do clube.</p>
+        <p class="text-sm text-gray-500 dark:text-gray-400">Adicione, edite e remova os custos e despesas do clube.</p>
       </div>
-      <button (click)="openModal(null)" class="flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-        Adicionar Custo
-      </button>
+      <div class="flex items-center gap-2">
+        <button (click)="openModal(null)" class="flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+          Adicionar Custo
+        </button>
+      </div>
     </div>
     
     <!-- Desktop Table -->

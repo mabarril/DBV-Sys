@@ -14,9 +14,7 @@ interface MembroFinanceiro {
   inscricao: Inscricao | null;
   mensalidades: Mensalidade[];
   debitos: Debito[];
-  saldoDevedor: number;
 }
-
 
 @Component({
   selector: 'app-membros',
@@ -37,11 +35,9 @@ export class MembrosComponent {
   searchTerm = signal('');
   showOnlyActive = signal(false);
   unidadeFiltro = signal('');
-  cargoFiltro = signal('');
   
   // Arrays for filter dropdowns
   unidades: Membro['unidade'][] = ['Águias', 'Falcões', 'Lobos', 'Tigres'];
-  cargos: Membro['cargo'][] = ['Desbravador', 'Conselheiro', 'Diretor', 'Tesoureiro', 'Instrutor'];
 
   // Member form modal state
   isModalOpen = signal(false);
@@ -66,7 +62,6 @@ export class MembrosComponent {
     const term = this.searchTerm().toLowerCase().trim();
     const onlyActive = this.showOnlyActive();
     const unidade = this.unidadeFiltro();
-    const cargo = this.cargoFiltro();
     const activeIds = this.activeMemberIds();
     
     const members = this.membros();
@@ -74,12 +69,11 @@ export class MembrosComponent {
     const filtered = members.filter(membro => {
       const matchActive = !onlyActive || activeIds.has(membro.id);
       const matchUnidade = !unidade || membro.unidade === unidade;
-      const matchCargo = !cargo || membro.cargo === cargo;
       const matchTerm = !term || 
         membro.nome.toLowerCase().includes(term) ||
         membro.cargo.toLowerCase().includes(term);
 
-      return matchActive && matchUnidade && matchCargo && matchTerm;
+      return matchActive && matchUnidade && matchTerm;
     });
     
     // Sorting logic
@@ -104,20 +98,11 @@ export class MembrosComponent {
       const mensalidades = inscricao ? this.mensalidades().filter(m => m.inscricaoId === inscricao.id) : [];
       const debitos = this.debitos().filter(d => d.membroId === membro.id);
       
-      const saldoDevedorMensalidades = mensalidades
-        .filter(m => m.status !== 'Paga')
-        .reduce((acc, m) => acc + m.valor, 0);
-      
-      const saldoDevedorDebitos = debitos
-        .filter(d => d.status !== 'Pago')
-        .reduce((acc, d) => acc + d.valor, 0);
-
       return {
         membro,
         inscricao,
         mensalidades,
         debitos,
-        saldoDevedor: saldoDevedorMensalidades + saldoDevedorDebitos,
       };
     });
   });
@@ -139,11 +124,6 @@ export class MembrosComponent {
   onUnidadeChange(event: Event): void {
     const value = (event.target as HTMLSelectElement).value;
     this.unidadeFiltro.set(value);
-  }
-
-  onCargoChange(event: Event): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.cargoFiltro.set(value);
   }
 
   // --- Member Form Modal Logic ---

@@ -5,15 +5,17 @@
       <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Livro de Atas e Atos</h1>
       <p class="mt-1 text-gray-600 dark:text-gray-400">Registre e consulte as atas de reuniões e atos oficiais do clube.</p>
     </div>
-    <button (click)="openModal(null)" class="mt-4 sm:mt-0 flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
-      <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-      Registrar Nova Ata
-    </button>
+    <div class="flex items-center gap-2 mt-4 sm:mt-0">
+      <button (click)="openModal(null)" class="flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+        Registrar Nova Ata
+      </button>
+    </div>
   </div>
 
   <!-- Atas Grid -->
   <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-    @for(ata of sortedAtas(); track ata.id) {
+    @for(ata of filteredAtas(); track ata.id) {
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md flex flex-col overflow-hidden">
         <!-- Header -->
         <div class="p-4 border-b border-gray-200 dark:border-gray-700">
@@ -70,8 +72,8 @@
       </div>
     } @empty {
       <div class="md:col-span-2 xl:col-span-3 text-center py-12 px-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
-        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Nenhum Registro de Ata</h2>
-        <p class="mt-2 text-gray-500 dark:text-gray-400">Clique em "Registrar Nova Ata" para criar o primeiro registro.</p>
+        <h2 class="text-xl font-semibold text-gray-800 dark:text-gray-200">Nenhum Registro de Ata Encontrado</h2>
+        <p class="mt-2 text-gray-500 dark:text-gray-400">Nenhuma ata foi criada ainda.</p>
       </div>
     }
   </div>

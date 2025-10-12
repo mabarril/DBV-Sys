@@ -1,0 +1,46 @@
+<main class="p-4 sm:p-6 bg-gray-50 dark:bg-gray-900/50 min-h-screen">
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800 dark:text-gray-200">Central de Relatórios</h1>
+    <p class="text-gray-600 dark:text-gray-400 mt-1">Gere e exporte relatórios detalhados sobre as atividades do clube.</p>
+  </header>
+
+  <!-- Tabs -->
+  <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
+    <nav class="-mb-px flex space-x-2 sm:space-x-6 overflow-x-auto" aria-label="Tabs">
+      <a routerLink="membros" 
+         routerLinkActive="border-yellow-500 text-yellow-600 dark:text-yellow-400"
+         [routerLinkActiveOptions]="{exact: true}"
+         class="flex items-center whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600 transition-colors">
+         <svg class="h-5 w-5 mr-2 hidden sm:inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.38 9.38 0 0 0 2.625.372 9.337 9.337 0 0 0 4.121-2.308M15 19.128v-3.043m0 3.043-2.625-.372a9.337 9.337 0 0 1-4.121-2.308m2.625-.372a9.337 9.337 0 0 1 4.121 2.308m0 0v-3.043m0 3.043-2.625.372a9.337 9.337 0 0 1-4.121-2.308M15 19.128v-3.043" /><path stroke-linecap="round" stroke-linejoin="round" d="M15 19.128a9.337 9.337 0 0 1-4.121-2.308L15 14.128v5.001ZM15 19.128a9.337 9.337 0 0 0 4.121-2.308L15 14.128v5.001Z" /><path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386-1.591 1.591M21 12h-2.25m-.386 6.364-1.591-1.591M12 18.75V21m-4.773-4.227-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0Z" /></svg>
+        <span>Membros</span>
+      </a>
+      <a routerLink="especialidades" 
+         routerLinkActive="border-yellow-500 text-yellow-600 dark:text-yellow-400"
+         class="flex items-center whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600 transition-colors">
+         <svg class="h-5 w-5 mr-2 hidden sm:inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+        <span>Especialidades</span>
+      </a>
+       <a routerLink="financeiro" 
+         routerLinkActive="border-yellow-500 text-yellow-600 dark:text-yellow-400"
+         class="flex items-center whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600 transition-colors">
+         <svg class="h-5 w-5 mr-2 hidden sm:inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+        <span>Financeiro</span>
+      </a>
+      <a routerLink="eventos" 
+         routerLinkActive="border-yellow-500 text-yellow-600 dark:text-yellow-400"
+         class="flex items-center whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600 transition-colors">
+         <svg class="h-5 w-5 mr-2 hidden sm:inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+        <span>Eventos</span>
+      </a>
+      <a routerLink="atas" 
+         routerLinkActive="border-yellow-500 text-yellow-600 dark:text-yellow-400"
+         class="flex items-center whitespace-nowrap py-4 px-3 border-b-2 font-medium text-sm text-gray-500 hover:text-gray-700 hover:border-gray-300 dark:text-gray-400 dark:hover:text-gray-300 dark:hover:border-gray-600 transition-colors">
+         <svg class="h-5 w-5 mr-2 hidden sm:inline-block" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path></svg>
+        <span>Atas e Atos</span>
+      </a>
+    </nav>
+  </div>
+
+  <!-- Content -->
+  <router-outlet></router-outlet>
+</main>

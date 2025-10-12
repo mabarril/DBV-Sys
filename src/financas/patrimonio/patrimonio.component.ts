@@ -13,16 +13,13 @@ import { PatrimonioFormComponent } from './patrimonio-form/patrimonio-form.compo
 })
 export class PatrimonioComponent {
   private financasService = inject(FinancasService);
-
-  patrimonio = computed(() => 
-    this.financasService.getPatrimonio()().sort((a, b) => new Date(b.dataAquisicao).getTime() - new Date(a.dataAquisicao).getTime())
-  );
   
   isModalOpen = signal(false);
   editingPatrimonio = signal<Patrimonio | null>(null);
 
-  valorTotalPatrimonio = computed(() => {
-    return this.patrimonio().reduce((acc, item) => acc + item.valorAquisicao, 0);
+  patrimonio = computed(() => {
+    return this.financasService.getPatrimonio()()
+      .sort((a, b) => new Date(b.dataAquisicao).getTime() - new Date(a.dataAquisicao).getTime());
   });
 
   openModal(item: Patrimonio | null): void {

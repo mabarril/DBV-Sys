@@ -14,15 +14,12 @@ import { CustoFormComponent } from './custo-form/custo-form.component';
 export class CustosComponent {
   private financasService = inject(FinancasService);
 
-  custos = computed(() => 
-    this.financasService.getCustos()().sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-  );
-  
   isModalOpen = signal(false);
   editingCusto = signal<Custo | null>(null);
 
-  totalCustos = computed(() => {
-    return this.custos().reduce((acc, custo) => acc + custo.valor, 0);
+  custos = computed(() => {
+    return this.financasService.getCustos()()
+      .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
   });
 
   openModal(custo: Custo | null): void {

@@ -14,12 +14,12 @@ import { MovimentacaoFormComponent } from './movimentacao-form/movimentacao-form
 export class CaixaComponent {
   private financasService = inject(FinancasService);
 
-  movimentacoes = computed(() => 
-    this.financasService.getMovimentacoes()().sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-  );
-  
   isModalOpen = signal(false);
   editingMovimentacao = signal<MovimentacaoCaixa | null>(null);
+
+  movimentacoes = computed(() => {
+    return this.financasService.getMovimentacoes()().sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+  });
 
   totalEntradas = computed(() => {
     return this.movimentacoes()
@@ -34,7 +34,7 @@ export class CaixaComponent {
   });
 
   saldoAtual = computed(() => this.totalEntradas() - this.totalSaidas());
-  
+
   openModal(mov: MovimentacaoCaixa | null): void {
     this.editingMovimentacao.set(mov);
     this.isModalOpen.set(true);

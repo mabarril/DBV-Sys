@@ -12,14 +12,6 @@ interface GroupedEspecialidades {
   especialidades: Especialidade[];
 }
 
-interface RelatorioItem {
-  membroNome: string;
-  unidade: string;
-  especialidadeNome: string;
-  dataConclusao: string;
-  instrutorNome: string;
-}
-
 @Component({
   selector: 'app-especialidades',
   standalone: true,
@@ -41,50 +33,9 @@ export class EspecialidadesComponent {
   isConclusaoModalOpen = signal(false);
   activeEspecialidadeForConclusao = signal<Especialidade | null>(null);
 
-  // --- Report Logic ---
-  filtros = signal({
-    especialidadeId: '',
-    unidade: '',
-    ano: '',
-    mes: ''
-  });
-  relatorioGerado = signal(false);
-  relatorioResultados = signal<RelatorioItem[]>([]);
-
-  unidades = computed(() => {
-    const allUnidades = this.membros().map(m => m.unidade);
-    return [...new Set(allUnidades)].sort();
-  });
-
-  anosDisponiveis = computed(() => {
-    const allAnos = this.conclusoes().map(c => new Date(c.dataConclusao).getFullYear());
-    return [...new Set(allAnos)].sort((a, b) => b - a);
-  });
-
-  meses = [
-    { valor: '1', nome: 'Janeiro' }, { valor: '2', nome: 'Fevereiro' },
-    { valor: '3', nome: 'Março' }, { valor: '4', nome: 'Abril' },
-    { valor: '5', nome: 'Maio' }, { valor: '6', nome: 'Junho' },
-    { valor: '7', nome: 'Julho' }, { valor: '8', nome: 'Agosto' },
-    { valor: '9', nome: 'Setembro' }, { valor: '10', nome: 'Outubro' },
-    { valor: '11', nome: 'Novembro' }, { valor: '12', nome: 'Dezembro' }
-  ];
-
   private membrosMap = computed(() => {
     const map = new Map<number, string>();
     this.membros().forEach(membro => map.set(membro.id, membro.nome));
-    return map;
-  });
-
-  private membrosDataMap = computed(() => {
-    const map = new Map<number, { nome: string; unidade: Membro['unidade'] }>();
-    this.membros().forEach(m => map.set(m.id, { nome: m.nome, unidade: m.unidade }));
-    return map;
-  });
-
-  private especialidadesMap = computed(() => {
-    const map = new Map<number, string>();
-    this.especialidades().forEach(e => map.set(e.id, e.nome));
     return map;
   });
 
@@ -165,43 +116,5 @@ export class EspecialidadesComponent {
       }
     }
     this.closeConclusaoModal();
-  }
-
-  // Report Methods
-  onFiltroChange(event: Event, tipo: 'especialidadeId' | 'unidade' | 'ano' | 'mes'): void {
-    const value = (event.target as HTMLSelectElement).value;
-    this.filtros.update(f => ({ ...f, [tipo]: value }));
-  }
-
-  gerarRelatorio(): void {
-    const { especialidadeId, unidade, ano, mes } = this.filtros();
-    
-    const resultadosFiltrados = this.conclusoes()
-      .filter(c => {
-        const data = new Date(`${c.dataConclusao}T12:00:00`); // Use T12 to avoid timezone issues
-        const membro = this.membrosDataMap().get(c.membroId);
-
-        const matchEspecialidade = !especialidadeId || c.especialidadeId === Number(especialidadeId);
-        const matchUnidade = !unidade || membro?.unidade === unidade;
-        const matchAno = !ano || data.getFullYear() === Number(ano);
-        const matchMes = !mes || (data.getMonth() + 1) === Number(mes);
-        
-        return matchEspecialidade && matchUnidade && matchAno && matchMes;
-      })
-      .map(c => {
-        const membro = this.membrosDataMap().get(c.membroId);
-        const instrutor = this.membrosMap().get(c.instrutorId);
-        return {
-          membroNome: membro?.nome ?? 'Desconhecido',
-          unidade: membro?.unidade ?? 'N/A',
-          especialidadeNome: this.especialidadesMap().get(c.especialidadeId) ?? 'Desconhecida',
-          dataConclusao: c.dataConclusao,
-          instrutorNome: instrutor ?? 'Desconhecido'
-        };
-      })
-      .sort((a, b) => new Date(b.dataConclusao).getTime() - new Date(a.dataConclusao).getTime());
-
-    this.relatorioResultados.set(resultadosFiltrados);
-    this.relatorioGerado.set(true);
   }
 }

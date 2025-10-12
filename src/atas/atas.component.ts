@@ -22,10 +22,10 @@ export class AtasComponent {
   isModalOpen = signal(false);
   editingAta = signal<Ata | null>(null);
 
-  // Sort atas by date descending
-  sortedAtas = computed(() =>
-    this.atas().sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime())
-  );
+  filteredAtas = computed(() => {
+    return this.atas()
+      .sort((a, b) => new Date(b.data).getTime() - new Date(a.data).getTime());
+  });
 
   private membrosMap = computed(() => {
     const map = new Map<number, string>();

@@ -38,10 +38,6 @@ export const routes: Routes = [
         loadComponent: () => import('./financas/financas.component').then(c => c.FinancasComponent),
         children: [
           {
-            path: 'inscricoes',
-            loadComponent: () => import('./financas/inscricoes/inscricoes.component').then(c => c.InscricoesComponent)
-          },
-          {
             path: 'caixa',
             loadComponent: () => import('./financas/caixa/caixa.component').then(c => c.CaixaComponent)
           },
@@ -55,7 +51,38 @@ export const routes: Routes = [
           },
           {
             path: '',
-            redirectTo: 'inscricoes',
+            redirectTo: 'caixa',
+            pathMatch: 'full'
+          }
+        ]
+      },
+      {
+        path: 'relatorios',
+        loadComponent: () => import('./relatorios/relatorios.component').then(c => c.RelatoriosComponent),
+        children: [
+          {
+            path: 'membros',
+            loadComponent: () => import('./relatorios/relatorio-membros/relatorio-membros.component').then(c => c.RelatorioMembrosComponent)
+          },
+          {
+            path: 'especialidades',
+            loadComponent: () => import('./relatorios/relatorio-especialidades/relatorio-especialidades.component').then(c => c.RelatorioEspecialidadesComponent)
+          },
+          {
+            path: 'financeiro',
+            loadComponent: () => import('./relatorios/relatorio-financeiro/relatorio-financeiro.component').then(c => c.RelatorioFinanceiroComponent)
+          },
+           {
+            path: 'eventos',
+            loadComponent: () => import('./relatorios/relatorio-eventos/relatorio-eventos.component').then(c => c.RelatorioEventosComponent)
+          },
+           {
+            path: 'atas',
+            loadComponent: () => import('./relatorios/relatorio-atas/relatorio-atas.component').then(c => c.RelatorioAtasComponent)
+          },
+          {
+            path: '',
+            redirectTo: 'membros',
             pathMatch: 'full'
           }
         ]

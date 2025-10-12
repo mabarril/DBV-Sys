@@ -1,6 +1,6 @@
 <div class="space-y-6">
   <!-- Summary Cards -->
-  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+  <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3 mb-6">
     <div class="p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
       <h3 class="text-lg font-semibold text-green-600 dark:text-green-400">Total de Entradas</h3>
       <p class="mt-2 text-3xl font-bold font-mono">{{ totalEntradas() | currency:'BRL' }}</p>
@@ -23,10 +23,12 @@
         <h2 class="text-xl font-bold">Movimentações do Caixa</h2>
         <p class="text-sm text-gray-500 dark:text-gray-400">Visualize todas as entradas e saídas financeiras.</p>
       </div>
-      <button (click)="openModal(null)" class="flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
-        <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-        Adicionar Movimentação
-      </button>
+      <div class="flex items-center gap-2">
+        <button (click)="openModal(null)" class="flex-shrink-0 flex items-center justify-center px-4 py-2 bg-yellow-400 text-blue-900 font-bold rounded-md hover:bg-yellow-500 transition">
+          <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+          Adicionar Movimentação
+        </button>
+      </div>
     </div>
     
     <!-- Desktop Table -->
